@@ -9,23 +9,27 @@ pipeline {
             }
         }
 
-        stage('Test Backend') {
+        stage('Check Files') {
             steps {
-                echo 'Testing Go backend'
-                dir('backend') {
-                    sh 'go version'
-                    sh 'go mod tidy'
-                }
+                echo 'Checking project structure'
+                sh 'ls -la'
+                sh 'ls -la backend/'
+                sh 'ls -la frontend/'
             }
         }
 
-        stage('Test Frontend') {
+        stage('Build Docker Images') {
             steps {
-                echo 'Testing React frontend'
-                dir('frontend') {
-                    sh 'npm --version'
-                    sh 'npm ci'
-                }
+                echo 'Building Docker containers'
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Starting application'
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d'
             }
         }
     }
